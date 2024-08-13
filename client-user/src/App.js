@@ -1,5 +1,6 @@
+import "./styles/input.css";
 function App() {
-  return <div>HelloWorld</div>;
+  return <main className="text-center font-bold">HelloWorld</main>;
 }
 
 export default App;
