@@ -1,6 +1,15 @@
+import { Outlet } from "react-router-dom";
 import "./styles/input.css";
+import { Toaster } from "react-hot-toast";
 function App() {
-  return <main className="text-center font-bold">HelloWorld</main>;
+  return (
+    <>
+      <Toaster />
+      <main>
+        <Outlet />
+      </main>
+    </>
+  );
 }
 
 export default App;
