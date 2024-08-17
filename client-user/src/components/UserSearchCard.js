@@ -15,7 +15,13 @@ const UserSearchCard = ({ user, onClose }) => {
       onClick={handleOnClick}
       className="flex items-center gap-3 p-2 lg:p-4 border-b hover:border hover:border-primary rounded cursor-pointer"
     >
-      <Avatar width={50} height={50} name={user?.name} userId={user?._id} />
+      <Avatar
+        width={50}
+        height={50}
+        name={user?.name}
+        userId={user?._id}
+        imageUrl={user?.profile_pic}
+      />
       <div>
         <div className="font-semibold text-ellipsis line-clamp-1">
           {user?.name}
