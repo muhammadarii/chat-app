@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { FaUserPlus } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Avatar from "./Avatar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 import { FaImage, FaVideo } from "react-icons/fa";
+import { logout } from "../redux/userSlice";
 
 const Sidebar = () => {
   const user = useSelector((state) => state?.user);
@@ -16,6 +17,8 @@ const Sidebar = () => {
   const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
   const socketConnection = useSelector((state) => state?.user.socketConnection);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (socketConnection) {
@@ -48,6 +51,12 @@ const Sidebar = () => {
       });
     }
   }, [socketConnection, user]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/email");
+    localStorage.clear();
+  };
 
   return (
     <div className="w-full h-full grid grid-cols-[48px,1fr] bg-white">
@@ -89,6 +98,7 @@ const Sidebar = () => {
           <button
             className="w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded"
             title="logout"
+            onClick={handleLogout}
           >
             <span className="-ml-2">
               <BiLogOut size={20} />
@@ -116,7 +126,11 @@ const Sidebar = () => {
 
           {allUser.map((conv, index) => {
             return (
-              <div key={conv?._id} className="flex items-center gap-2">
+              <NavLink
+                to={"/" + conv?.userDetails?._id}
+                key={conv?._id}
+                className="flex items-center gap-2 py-3 px-2 border border-transparent hover:border-primary rounded hover:bg-slate-100 cursor-pointer"
+              >
                 <div>
                   <Avatar
                     imageUrl={conv?.userDetails.profile_pic}
@@ -126,17 +140,17 @@ const Sidebar = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="text-ellipsis line-clamp-1">
+                  <h3 className="text-ellipsis line-clamp-1 font-semibold text-base">
                     {conv?.userDetails?.name}
                   </h3>
-                  <div className="text-slate-500 text-xs">
+                  <div className="text-slate-500 text-xs flex items-center gap-1">
                     <div className="flex items-center gap-1">
                       {conv?.lastMsg?.imageUrl && (
                         <div className="flex items-center gap-1">
                           <span>
                             <FaImage />
                           </span>
-                          <span>Image</span>
+                          {!conv?.lastMsg?.text && <span>Image</span>}
                         </div>
                       )}
                       {conv?.lastMsg?.videoUrl && (
@@ -144,14 +158,21 @@ const Sidebar = () => {
                           <span>
                             <FaVideo />
                           </span>
-                          <span>Video</span>
+                          {!conv?.lastMsg?.text && <span>Video</span>}
                         </div>
                       )}
                     </div>
-                    <p>{conv?.lastMsg.text}</p>
+                    <p className="text-ellipsis line-clamp-1">
+                      {conv?.lastMsg?.text}
+                    </p>
                   </div>
                 </div>
-              </div>
+                {Boolean(conv?.unseenMsg) && (
+                  <p className="text-xs w-6 h-6 flex justify-center items-center ml-auto p-1 bg-primary text-white font-semibold rounded-full">
+                    {conv?.unseenMsg}
+                  </p>
+                )}
+              </NavLink>
             );
           })}
         </div>

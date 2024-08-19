@@ -90,6 +90,8 @@ const MessagePage = () => {
     if (socketConnection) {
       socketConnection.emit("message-page", params.userId);
 
+      socketConnection.emit("seen", params.userId);
+
       socketConnection.on("message-user", (data) => {
         setDataUser(data);
       });
@@ -180,8 +182,10 @@ const MessagePage = () => {
           {allMessage.map((msg, index) => {
             return (
               <div
-                className={`bg-white p-1 py-1 rounded-lg w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
-                  user._id === msg.msgByUserId ? "ml-auto bg-teal-100" : ""
+                className={` p-1 py-1 rounded-lg w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                  user._id === msg.msgByUserId
+                    ? "ml-auto bg-teal-100"
+                    : "bg-white"
                 }`}
               >
                 <div className="w-full">
